@@ -10,8 +10,19 @@ edition = "2024"
 min_sdk_version = 29
 target_sdk_version = 36
 
+[package.metadata.android.signing.release]
+# uncomment for working
+# path = "" # use your own key for signing apk in release mode
+# keystore_password = "" # use your own password for signing apk in release mode
+
 [lib]
 crate-type = ["cdylib"] # Crucial: Compiles the project as a dynamic C library (.so) For android
+
+[package.metadata.android.application]
+uses_cleartext_traffic = true # for http protocol(not https)
+
+[[package.metadata.android.uses_permission]]
+name = "android.permission.INTERNET"
 
 [dependencies]
 eframe = { version = "0.36", default-features = false, features = ["default_fonts", "persistence", "glow"] } # make sure its compares with default eframe only with adding android-native-activity

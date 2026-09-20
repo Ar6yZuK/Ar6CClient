@@ -1,8 +1,12 @@
 use std::{
-    fs::File, io::Write, path::PathBuf, sync::{Arc, Mutex},
+    fs::File,
+    io::Write,
+    path::PathBuf,
+    sync::{Arc, Mutex},
 };
 
 use bytes::Bytes;
+use eframe::egui::CentralPanel;
 use egui_file_dialog::FileDialog;
 use reqwest::header::CONTENT_DISPOSITION;
 use uuid::Uuid;
@@ -23,7 +27,8 @@ impl Default for MyApp {
     fn default() -> Self {
         Self {
             client: Arc::new(Client::new("http://192.168.1.13:5000")),
-            file_dialog: egui_file_dialog::FileDialog::new(),
+            file_dialog: egui_file_dialog::FileDialog::new()
+				.initial_directory("/sdcard/Download".into()),
             rt: tokio::runtime::Builder::new_multi_thread()
                 .enable_all()
                 .build()
@@ -38,7 +43,12 @@ impl Default for MyApp {
 
 impl eframe::App for MyApp {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, _frame: &mut eframe::Frame) {
-        self.receive_file_from_client_button(ui);
+		let frame = eframe::egui::Frame::default()
+			.inner_margin(eframe::egui::Margin { left: 10, right: 10, top: 25, bottom: 25 }); // margin for better working on android
+
+		CentralPanel::default()
+			.frame(frame)
+			.show(ui, |ui| self.receive_file_from_client_button(ui));
     }
 }
 
@@ -117,6 +127,7 @@ impl MyApp {
 
                 if let Ok(mut picking_file) = picking_file.lock() {
                     *picking_file = true;
+					// ui.request_repaint(); // TODO: repaint when picked file. for update file_dialog
                 }
 
                 Ok(())
@@ -150,8 +161,7 @@ impl MyApp {
             self.file_dialog.save_file();
         }
 
-        if let Some(_path_to_saving_file) =
-            MyApp::update_file_dialog(&mut self.file_dialog, &self.path_to_saved_file, ui)
+        if let Some(_path_to_saving_file) = MyApp::update_file_dialog(&mut self.file_dialog, &self.path_to_saved_file, ui)
         {
             let path_to_saved_file = Arc::clone(&self.path_to_saved_file);
             let file_data = Arc::clone(&self.file_data);
