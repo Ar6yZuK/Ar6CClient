@@ -1,0 +1,327 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ar6CServer | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://192.168.1.13:5000/"
+    }
+  ],
+  "paths": {
+    "/AddAllowed/{ip}": {
+      "get": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "AddAllowedIp",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/RemoveAllowed/{ip}": {
+      "get": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "RemoveAllowedIp",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/getFile/{guid}": {
+      "get": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "GetServerFile",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/{operation}": {
+      "post": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "InvokeOperation",
+        "parameters": [
+          {
+            "name": "operation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OperationType"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationValue",
+                "nullable": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/getNames": {
+      "get": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "GetNames",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/V2/{operationName}": {
+      "post": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "InvokeOperationV2",
+        "parameters": [
+          {
+            "name": "operationName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationValue",
+                "nullable": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/V2/addOperation": {
+      "post": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "AddOperationV2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/V2/unloadOperation": {
+      "post": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "UnloadOperationV2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/V2/getNames": {
+      "get": {
+        "tags": [
+          "Ar6CServer"
+        ],
+        "operationId": "GetNamesV2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperationDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OperationDTO": {
+        "required": [
+          "name",
+          "description",
+          "parameter",
+          "return"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parameter": {
+            "$ref": "#/components/schemas/ParameterDTO",
+            "nullable": true
+          },
+          "return": {
+            "$ref": "#/components/schemas/ReturnDTO",
+            "nullable": true
+          }
+        }
+      },
+      "OperationType": {
+        "type": "integer"
+      },
+      "OperationValue": {
+        "type": "object"
+      },
+      "ParameterDTO": {
+        "required": [
+          "name",
+          "description",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "ReturnDTO": {
+        "required": [
+          "name",
+          "description",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Ar6CServer"
+    }
+  ]
+}
