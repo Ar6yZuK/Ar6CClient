@@ -1,3 +1,4 @@
+#[cfg(target_os = "android")]
 use jni::{JavaVM, objects::JObject};
 
 pub mod App;
@@ -26,6 +27,7 @@ fn android_main(app: android_activity::AndroidApp) {
 //     // Initialization code here
 // }
 
+#[cfg(target_os = "android")]
 pub fn hide_navigation_bar(app: &android_activity::AndroidApp) {
     let vm_ptr = app.vm_as_ptr();
     let activity_ptr = app.activity_as_ptr();

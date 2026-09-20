@@ -28,7 +28,7 @@ impl Default for MyApp {
         Self {
             client: Arc::new(Client::new("http://192.168.1.13:5000")),
             file_dialog: egui_file_dialog::FileDialog::new()
-				.initial_directory("/sdcard/Download".into()),
+				.on_android(|x| x.initial_directory("/sdcard/Download".into())),
             rt: tokio::runtime::Builder::new_multi_thread()
                 .enable_all()
                 .build()
@@ -189,4 +189,17 @@ impl MyApp {
             });
         }
     }
+}
+
+trait FileDialogMyExt {
+	fn on_android<T>(self, execute : T)  -> Self where T: Fn(FileDialog) -> FileDialog;
+}
+impl FileDialogMyExt for FileDialog {
+	#[inline]
+	fn on_android<T>(self, #[allow(unused_variables)] execute : T) -> Self where T: Fn(FileDialog) -> FileDialog {
+		#[cfg(target_os = "android")]
+		return execute(self);
+		#[cfg(not(target_os = "android"))]
+		return self;
+	}
 }
